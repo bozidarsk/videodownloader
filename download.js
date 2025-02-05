@@ -40,17 +40,6 @@ async function getSources()
 	return await fetch(`${REMOTE}/getSources`, { method: "POST" }).then(x => x.json());
 }
 
-// function getAllTags(root, name) 
-// {
-// 	var tags = Array.from(root.getElementsByTagName(name));
-// 	var iframes = Array.from(root.getElementsByTagName("iframe"));
-
-// 	for (var i = 0; i < iframes.length; i++)
-// 		tags = tags.concat(getAllTags(iframes[i].contentDocument, name));
-
-// 	return tags;
-// }
-
 async function downloadMovie(name, url) 
 {
 	running = true;
@@ -85,10 +74,6 @@ browser.runtime.onMessage.addListener(async (message) =>
 				log("Stopping.", false);
 				break;
 			case "getsources":
-				// var videos = getAllTags(document, "video");
-				// for (var i = 0; i < videos.length; i++)
-				// 	addSource(videos[i].src);
-
 				return Promise.resolve({ sources: await getSources() });
 			case "parserequest":
 				if (
