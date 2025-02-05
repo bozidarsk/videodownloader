@@ -10,3 +10,5 @@ npm install
 ```
 
 Add the `manifest.json` as a temporary extension to firefox.
+
+Run the `download.py` python script.
