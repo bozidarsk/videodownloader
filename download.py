@@ -12,7 +12,9 @@ sources = {} # Dictionary<string, string> - Dictionary<url, name>
 def getPartFilename(filename, index):
 	return f".{filename.encode("utf-8").hex()}.part{index}"
 
-def save(filename, index, data):
+def save(filename, index, data, count):
+	print(f"Downloading '{filename}' - {int((index / count) * 100)}%.")
+
 	with open(getPartFilename(filename, index), "wb") as file:
 		file.write(data)
 
@@ -32,6 +34,7 @@ def finalize(filename, count):
 
 			remove(name)
 
+	print(f"Downloaded '{filename}'.")
 	return -1
 
 def remapSourceDictionary(dic):
@@ -59,6 +62,7 @@ class Server(BaseHTTPRequestHandler):
 			case "/save":
 				filename = query.get("filename")
 				index = query.get("index")
+				count = query.get("count")
 
 				if (not filename[0]):
 					self.error_response(f"Invalid filename. ('{filename[0]}')")
@@ -66,8 +70,11 @@ class Server(BaseHTTPRequestHandler):
 				if (not index[0]):
 					self.error_response(f"Invalid index. ('{index[0]}')")
 					return
+				if (not count[0]):
+					self.error_response(f"Invalid count. ('{count[0]}')")
+					return
 
-				save(filename[0], int(index[0]), self.rfile.read(int(self.headers["Content-Length"])))
+				save(filename[0], int(index[0]), self.rfile.read(int(self.headers["Content-Length"])), int(count[0]))
 			case "/finalize":
 				filename = query.get("filename")
 				count = query.get("count")

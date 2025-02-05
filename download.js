@@ -46,10 +46,11 @@ async function downloadMovie(name, url)
 
 	var parts = await fetch(url).then(x => x.text()).then(x => x.split("\n")).then(x => x.filter(line => line.startsWith("https")));
 	var encodedName = encodeURIComponent(name);
+	var encodedCount = encodeURIComponent(parts.length);
 
 	for (var i = 0; i < parts.length && running; i++) 
 	{
-		await fetch(`${REMOTE}/save?filename=${encodedName}&index=${i}`, 
+		await fetch(`${REMOTE}/save?filename=${encodedName}&index=${i}&count=${encodedCount}`, 
 			{
 				method: "POST",
 				body: await fetch(parts[i]).then(x => x.blob()),
@@ -58,7 +59,7 @@ async function downloadMovie(name, url)
 		);
 	}
 
-	await fetch(`${REMOTE}/finalize?filename=${encodedName}&count=${encodeURIComponent(parts.length)}`, { method: "POST" });
+	await fetch(`${REMOTE}/finalize?filename=${encodedName}&count=${encodedCount}`, { method: "POST" });
 }
 
 browser.runtime.onMessage.addListener(async (message) => 
